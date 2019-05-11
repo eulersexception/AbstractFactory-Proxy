@@ -1,0 +1,93 @@
+@startuml
+skinparam linetype polyline
+skinparam linetype ortho
+abstract class AbstractDataManager{
+    - name: String 
+    + {abstract}  createDataWriter(fileName: String): AbstractDataWriter
+    + {abstract}  createDataReader(fileName: String): AbstractDataReader
+}
+
+abstract class AbstractDataReader{
+    - sourceFile: File 
+    + {abstract} readString(): String
+}
+
+abstract class AbstractDataWriter{
+    - destinationFile: File 
+    + {abstract} writeString(): long
+}
+
+class SecureFileDataManager{
+    + createDataWriter(fileName: String): SecureFileDataWriter
+    + createDataReader(fileName: String): SecureFileDataReader
+}
+class PlainFileDataManager{
+    + <color:testsColor(testMethods[PlainFileDataManager])>createDataWriter(fileName: String): PlainFileDataWriter</color>
+    + <color:testsColor(testMethods[PlainFileDataManager])>createDataReader(fileName: String): PlainFileDataReader</color>
+}
+class ImageFileDataManager{
+    + <color:testsColor(testMethods[ImageFileDataManager])>createDataWriter(fileName: String): ImageFileProxyDataWriter</color>
+    + <color:testsColor(testMethods[ImageFileDataManager])>createDataReader(fileName: String): ImageFileProxyDataReader</color>
+}
+
+class SecureFileDataReader{
+    - unscramble(scrambled: String): String
+    + readString(): String
+}
+
+class SecureFileDataWriter{
+    - scramble(source: String): String
+    + writeString(): long
+}
+class PlainFileDataReader{
+    + <color:testsColor(testMethods[PlainFileDataReader])>readString(): String</color>
+}
+
+class PlainFileDataWriter{
+    + <color:testsColor(testMethods[PlainFileDataWriter])>writeString(): long</color>
+}
+class ImageFileDataReader{
+    + <color:testsColor(testMethods[ImageFileDataReader])>readString(): String</color>
+}
+
+class ImageFileDataWriter{
+    + <color:testsColor(testMethods[ImageFileDataWriter])>writeString(): long</color>
+}
+
+class ImageFileProxyDataReader{
+    - <color:testsColor(testAttributes[ImageFileProxyDataReader])>imageFileDataReader: ImageFileDataReader</color>
+    + <color:testsColor(testMethods[ImageFileProxyDataReader])>readString(): String</color>
+}
+
+class ImageFileProxyDataWriter{
+    - <color:testsColor(testAttributes[ImageFileProxyDataWriter])>imageFileDataWriter: ImageFileDataWriter</color>
+    + <color:testsColor(testMethods[ImageFileProxyDataWriter])>writeString(): long</color>
+}
+
+AbstractDataManager <|-- SecureFileDataManager
+AbstractDataManager <|-- PlainFileDataManager
+AbstractDataManager <|-- ImageFileDataManager
+
+SecureFileDataReader --|> AbstractDataReader
+PlainFileDataReader --|> AbstractDataReader
+ImageFileDataReader --|> AbstractDataReader
+ImageFileProxyDataReader --|> AbstractDataReader
+ImageFileProxyDataReader --> ImageFileDataReader
+
+SecureFileDataWriter --|> AbstractDataWriter
+PlainFileDataWriter --|> AbstractDataWriter
+ImageFileDataWriter --|> AbstractDataWriter
+ImageFileProxyDataWriter --|> AbstractDataWriter
+ImageFileProxyDataWriter --> ImageFileDataWriter
+
+SecureFileDataManager ..>SecureFileDataReader: <<create>>
+SecureFileDataManager ..>SecureFileDataWriter: <<create>>
+
+PlainFileDataManager ..>PlainFileDataReader: <<create>>
+PlainFileDataManager ..>PlainFileDataWriter: <<create>>
+
+ImageFileDataManager ..>ImageFileProxyDataReader: <<create>>
+ImageFileDataManager ..>ImageFileProxyDataWriter: <<create>>
+
+
+@enduml
